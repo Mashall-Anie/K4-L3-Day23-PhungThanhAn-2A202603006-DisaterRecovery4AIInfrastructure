@@ -89,6 +89,7 @@ def failover(target: str, backend: str, wait: float) -> dict:
 
     # ---- Bước 3: scale_pool — warm -> full để bật GPU pool ----
     pool_file = pathlib.Path(f"state/region-{target}/pool_state")
+    pool_file.parent.mkdir(parents=True, exist_ok=True)
     pool_file.write_text("full")
     emit(step="3_scale_pool", pool_state="full", pool_state_file=str(pool_file))
     result["steps"].append("3_scale_pool")
