@@ -1,0 +1,20 @@
+{"ts": 1791516669.2578142, "iso": "2026-10-09T03:31:09", "step": "1_verify_target", "target": "b", "target_state_before": {"region": "b", "pool_state": "warm"}}
+{"ts": 1791516669.2583745, "iso": "2026-10-09T03:31:09", "step": "2_restore_snapshot", "snapshot_at": 1791516669.258028, "restored_at": null, "embed_model_version": "test", "rpo_seconds": null, "docs_lost": null}
+{"ts": 1791516669.2585635, "iso": "2026-10-09T03:31:09", "step": "3_scale_pool", "pool_state": "full", "pool_state_file": "state/region-b/pool_state"}
+{"ts": 1791516670.2588706, "iso": "2026-10-09T03:31:10", "step": "4_wait_ready", "ready": false, "waited_s": 1.0, "reason": "ConnectError"}
+{"ts": 1791516670.2592182, "iso": "2026-10-09T03:31:10", "step": "ABORT", "why": "4_wait_ready timeout sau 1.0s -> KHONG cutover"}
+{"ts": 1791517342.02552, "iso": "2026-10-09T03:42:22", "step": "1_verify_target", "target": "b", "target_state_before": {"region": "b", "pool_state": "warm", "weights": false, "count": 0, "latest_doc_ts": null, "ts": 1791517342.024912}}
+{"ts": 1791517342.036306, "iso": "2026-10-09T03:42:22", "step": "2_restore_snapshot", "snapshot_at": 1791517334.6857858, "restored_at": 1791517342.0265284, "embed_model_version": "embed-model=vi-e5-base@v3", "rpo_seconds": 8.0, "docs_lost": 4}
+{"ts": 1791517342.0366993, "iso": "2026-10-09T03:42:22", "step": "3_scale_pool", "pool_state": "full", "pool_state_file": "state/region-b/pool_state"}
+{"ts": 1791517348.1601841, "iso": "2026-10-09T03:42:28", "step": "4_wait_ready", "ready": true, "waited_s": 6.12, "reason": null}
+{"ts": 1791517348.1604888, "iso": "2026-10-09T03:42:28", "step": "5_dns_cutover", "active_region": "b", "file": "edge/active_region"}
+{"ts": 1791518572.2414234, "iso": "2026-10-09T04:02:52", "step": "1_verify_target", "target": "b", "target_state_before": {"region": "b", "pool_state": "warm"}}
+{"ts": 1791518572.2422285, "iso": "2026-10-09T04:02:52", "step": "2_restore_snapshot", "snapshot_at": 1791518572.2416043, "restored_at": null, "embed_model_version": "test", "rpo_seconds": 60.01, "docs_lost": 30}
+{"ts": 1791518572.2424855, "iso": "2026-10-09T04:02:52", "step": "3_scale_pool", "pool_state": "full", "pool_state_file": "state/region-b/pool_state"}
+{"ts": 1791518573.2431226, "iso": "2026-10-09T04:02:53", "step": "4_wait_ready", "ready": false, "waited_s": 1.0, "reason": "ConnectError"}
+{"ts": 1791518573.2437613, "iso": "2026-10-09T04:02:53", "step": "ABORT", "why": "4_wait_ready timeout sau 1.0s -> KHONG cutover"}
+{"ts": 1791518627.5954154, "iso": "2026-10-09T04:03:47", "step": "1_verify_target", "target": "b", "target_state_before": {"region": "b", "pool_state": "warm"}}
+{"ts": 1791518627.5964432, "iso": "2026-10-09T04:03:47", "step": "2_restore_snapshot", "snapshot_at": 1791518627.5956244, "restored_at": null, "embed_model_version": "test", "rpo_seconds": 60.01, "docs_lost": 30}
+{"ts": 1791518627.5969062, "iso": "2026-10-09T04:03:47", "step": "3_scale_pool", "pool_state": "full", "pool_state_file": "state/region-b/pool_state"}
+{"ts": 1791518628.5980277, "iso": "2026-10-09T04:03:48", "step": "4_wait_ready", "ready": false, "waited_s": 1.0, "reason": "ConnectError"}
+{"ts": 1791518628.5985222, "iso": "2026-10-09T04:03:48", "step": "ABORT", "why": "4_wait_ready timeout sau 1.0s -> KHONG cutover"}

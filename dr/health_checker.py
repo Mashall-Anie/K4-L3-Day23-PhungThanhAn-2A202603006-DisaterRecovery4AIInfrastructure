@@ -30,13 +30,74 @@ URL = {"a": "http://127.0.0.1:8001", "b": "http://127.0.0.1:8002"}
 
 def probe(region: str, timeout: float) -> tuple[bool, str]:
     """TODO: trả về (ready, reason). Timeout PHẢI có — netblock làm request treo mãi."""
-    raise NotImplementedError
+    """
+    Dùng /readyz (KHÔNG dùng /healthz): process sống chưa chắc serve được —
+    region thiếu weights / vector DB rỗng / pool chưa full vẫn là NOT READY.
+    """
+    try:
+        r = httpx.get(f"{URL[region]}/readyz", timeout=timeout)
+    except httpx.TimeoutException:
+        return False, "timeout"
+    except httpx.ConnectError:
+        return False, "connect_error"
+    except Exception as e:  # mọi lỗi mạng khác: coi như chưa ready
+        return False, type(e).__name__
+    if r.status_code == 200:
+        return True, "ready"
+    try:
+        reasons = r.json().get("reasons", [])
+    except Exception:
+        reasons = []
+    return False, f"http_{r.status_code}:" + ",".join(reasons)
+
+
+def emit(out: pathlib.Path, **kw):
+    """Ghi 1 dòng JSONL — chỉ gọi khi TRẠNG THÁI ĐỔI, không gọi mỗi lần poll."""
+    rec = {"ts": time.time(), "iso": time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()),
+           "event": "state_change", **kw}
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("a") as f:
+        f.write(json.dumps(rec) + "\n")
+    print("HEALTH", json.dumps(rec), flush=True)
+    return rec
 
 
 def run(interval: float, timeout: float, threshold: int, duration: float, out: pathlib.Path):
-    """TODO: vòng lặp poll + phát hiện transition + ghi JSONL."""
-    raise NotImplementedError
+    """Vòng lặp poll + phát hiện transition + ghi JSONL.
 
+    - Mỗi `interval` giây: probe CẢ HAI region.
+    - Chỉ đổi sang UNHEALTHY sau `threshold` lần fail LIÊN TIẾP (chống flapping).
+    - Một lần probe OK khi đang UNHEALTHY -> phục hồi HEALTHY ngay.
+    - Chỉ ghi log khi trạng thái THẬT SỰ đổi (kèm interval_s + threshold để
+      tools/measure_rto.py tính được detect floor).
+    """
+    # Giả định ban đầu: các region HEALTHY cho tới khi chứng minh ngược lại.
+    state = {r: {"status": "HEALTHY", "fails": 0} for r in URL}
+    end = time.time() + duration
+    while time.time() < end:
+        loop_start = time.time()
+        for region in URL:
+            ready, reason = probe(region, timeout)  # gọi qua tên module-level để test monkeypatch được
+            s = state[region]
+            if ready:
+                s["fails"] = 0
+                if s["status"] != "HEALTHY":
+                    s["status"] = "HEALTHY"
+                    emit(out, region=region, to="HEALTHY", from_state="UNHEALTHY",
+                         reason=reason, interval_s=interval, threshold=threshold,
+                         consecutive_fails=0)
+            else:
+                s["fails"] += 1
+                if s["fails"] >= threshold and s["status"] != "UNHEALTHY":
+                    s["status"] = "UNHEALTHY"
+                    emit(out, region=region, to="UNHEALTHY", from_state="HEALTHY",
+                         reason=f"{threshold} probe /readyz fail lien tiep ({reason})",
+                         interval_s=interval, threshold=threshold,
+                         consecutive_fails=s["fails"])
+        # Giữ đúng nhịp interval (probe có thể tốn thời gian, vd timeout 2s khi netblock)
+        remaining = interval - (time.time() - loop_start)
+        if remaining > 0:
+            time.sleep(min(remaining, max(0.0, end - time.time())))
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
