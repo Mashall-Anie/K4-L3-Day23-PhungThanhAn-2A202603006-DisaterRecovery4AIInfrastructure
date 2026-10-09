@@ -18,3 +18,8 @@
 {"ts": 1791518627.5969062, "iso": "2026-10-09T04:03:47", "step": "3_scale_pool", "pool_state": "full", "pool_state_file": "state/region-b/pool_state"}
 {"ts": 1791518628.5980277, "iso": "2026-10-09T04:03:48", "step": "4_wait_ready", "ready": false, "waited_s": 1.0, "reason": "ConnectError"}
 {"ts": 1791518628.5985222, "iso": "2026-10-09T04:03:48", "step": "ABORT", "why": "4_wait_ready timeout sau 1.0s -> KHONG cutover"}
+{"ts": 1791519734.934438, "iso": "2026-10-09T04:22:14", "step": "1_verify_target", "target": "b", "target_state_before": {"region": "b", "pool_state": "warm"}}
+{"ts": 1791519734.9354267, "iso": "2026-10-09T04:22:14", "step": "2_restore_snapshot", "snapshot_at": 1791519734.9346716, "restored_at": null, "embed_model_version": "test", "rpo_seconds": 60.01, "docs_lost": 30}
+{"ts": 1791519734.9358344, "iso": "2026-10-09T04:22:14", "step": "3_scale_pool", "pool_state": "full", "pool_state_file": "state/region-b/pool_state"}
+{"ts": 1791519735.9363885, "iso": "2026-10-09T04:22:15", "step": "4_wait_ready", "ready": false, "waited_s": 1.0, "reason": "ConnectError"}
+{"ts": 1791519735.9370003, "iso": "2026-10-09T04:22:15", "step": "ABORT", "why": "4_wait_ready timeout sau 1.0s -> KHONG cutover"}
